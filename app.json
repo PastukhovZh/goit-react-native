@@ -1,9 +1,9 @@
 {
   "expo": {
-    "name": "myApp",
-    "slug": "myApp",
+    "name": "goit-react-native-01",
+    "slug": "goit-react-native-01",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
