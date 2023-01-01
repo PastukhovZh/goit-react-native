@@ -1,6 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Camera } from "expo-camera";
+
+import * as Location from "expo-location";
 
 import {
+  Alert,
+  Button,
+  Image,
   Keyboard,
   Text,
   ScrollView,
@@ -16,28 +22,96 @@ import MapIcon from "../../assets/img/map-pin.svg";
 import Photo from "../../assets/img/Photo.svg";
 import Trash from "../../assets/img/trash.svg";
 
-export const CreateScreen = ({ onLayout }) => {
+export const CreateScreen = ({ onLayout, navigation }) => {
   const [name, setName] = useState("");
-  const [location, setLocation] = useState("");
+  const [location, setLocation] = useState(null);
 
+  //   camera
 
-  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+  const [permission, requestPermission] = Camera.useCameraPermissions();
+  const [camera, setCamera] = useState(null);
+  const [photo, setPhoto] = useState(null);
+
+  //   зайва змінна?
 
   const nameHandler = (text) => setName(text.trim());
-  const locationHandler = (text) => setLocation(text.trim());
+  //   const locationHandler = (text) => setLocation(text.trim());
 
   const onPost = () => {
+    if (!name.trim() && !location) {
+      Alert.alert(`Please fill in all info!`);
+      return;
+    }
+    sendInfo();
     setName("");
-    setLocation("");
-
-    setIsShowKeyboard(false);
+    setLocation(null);
+    setPhoto(null);
     Keyboard.dismiss();
   };
 
   const keyboardHide = () => {
-    setIsShowKeyboard(false);
     Keyboard.dismiss();
   };
+
+  const onDelete = () => {
+    setName("");
+    setLocation(null);
+    setPhoto(null);
+
+    Keyboard.dismiss();
+  };
+
+  //   Camera
+  const takePhoto = async () => {
+    const photo = await camera.takePictureAsync();
+    setPhoto(photo.uri);
+  };
+
+  useEffect(() => {
+    (async () => {
+      if (Platform.OS === "android" && !Device.isDevice) {
+        setErrorMsg(
+          "Oops, this will not work on Snack in an Android Emulator. Try it on your device!"
+        );
+        return;
+      }
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+
+      //   let location = await Location.getCurrentPositionAsync({});
+      let locationOfPhoto = await Location.getCurrentPositionAsync();
+
+      let coords = {
+        latitude: locationOfPhoto.coords.latitude,
+        longitude: locationOfPhoto.coords.longitude,
+      };
+      setLocation(coords);
+      console.log(`location`, location);
+    })();
+  }, []);
+
+  const sendInfo = () => {
+    navigation.navigate("Posts", { photo, name, location });
+  };
+
+  if (!permission) {
+    // Camera permissions are still loading
+    return <View />;
+  }
+  if (!permission.granted) {
+    // Camera permissions are not granted yet
+    return (
+      <View style={{ marginTop: 100 }}>
+        <Text style={{ textAlign: "center" }}>
+          We need your permission to show the camera
+        </Text>
+        <Button onPress={requestPermission} title="Change photo" />
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={styles.container} onLayout={onLayout}>
@@ -58,23 +132,37 @@ export const CreateScreen = ({ onLayout }) => {
             }}
           >
             <View>
-              <View style={{ ...styles.imgThumb }}>
-                <TouchableOpacity>
-                  <Photo />
-                </TouchableOpacity>
-              </View>
+              {photo ? (
+                <View style={styles.takePhotoContainer}>
+                  <Image
+                    source={{ uri: photo }}
+                    style={{ height: 240, width: "100%" }}
+                  />
+                  <TouchableOpacity
+                    style={styles.changeBtn}
+                    onPress={() => setPhoto(null)}
+                  >
+                    <Text style={{ color: "#fff" }}>New Photo</Text>
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <Camera
+                  ref={setCamera}
+                  style={{
+                    ...styles.camera,
+                    backgroundColor: "rgba(189, 189, 189, 1)",
+                  }}
+                >
+                  <TouchableOpacity onPress={takePhoto}>
+                    <Photo />
+                  </TouchableOpacity>
+                </Camera>
+              )}
+
               <View style={styles.form}>
-                <TouchableOpacity>
-                  <Text style={{ ...styles.download, fontFamily: "Roboto" }}>
-                    Download a photo
-                  </Text>
-                </TouchableOpacity>
                 <TextInput
                   value={name}
                   onChangeText={nameHandler}
-                  onFocus={() => {
-                    setIsShowKeyboard(true);
-                  }}
                   placeholder="Name"
                   style={{
                     ...styles.input,
@@ -82,24 +170,29 @@ export const CreateScreen = ({ onLayout }) => {
                   }}
                 />
                 <View>
-                  <TextInput
-                    value={location}
-                    onChangeText={locationHandler}
-                    onFocus={() => {
-                      setIsShowKeyboard(true);
-                    }}
-                    placeholder="Location"
+                  <TouchableOpacity
                     style={{
                       ...styles.input,
                       paddingLeft: 28,
-                      fontFamily: "Roboto",
+
+                      justifyContent: "center",
                     }}
-                  />
-                  <MapIcon style={styles.location} />
+                    onPress={() => navigation.navigate("MapScreen")}
+                  >
+                    <MapIcon style={styles.location} />
+                    <Text
+                      style={{
+                        fontFamily: "Roboto",
+                        color: "#BDBDBD",
+                        fontSize: 16,
+                      }}
+                    >
+                      Location: {location?.latitude}, {location?.longitude}
+                    </Text>
+                  </TouchableOpacity>
                 </View>
                 <TouchableOpacity
-                  //  перевіряємо на наявність всіх наних і активуємо тоді кнопку
-                  //   disabled = { data ? false : true }
+                  disabled={photo ? false : true}
                   style={styles.submitBtn}
                   activeOpacity={0.8}
                   onPress={onPost}
@@ -109,9 +202,7 @@ export const CreateScreen = ({ onLayout }) => {
               </View>
             </View>
             <View style={{ alignItems: "center" }}>
-              <TouchableOpacity
-              //   onPress={()=>{}} - буде щось очищати або видаляти
-              >
+              <TouchableOpacity onPress={onDelete}>
                 <Trash width={70} height={40} />
               </TouchableOpacity>
             </View>
@@ -146,14 +237,33 @@ const styles = StyleSheet.create({
     top: 55,
     left: 16,
   },
-  imgThumb: {
+  camera: {
     height: 240,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(189, 189, 189, 1)",
     marginHorizontal: 16,
     marginTop: 32,
   },
+  takePhotoContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    marginHorizontal: 16,
+    marginTop: 32,
+  },
+  changeBtn: {
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 43,
+    marginBottom: 16,
+
+    height: 50,
+    width: 150,
+    borderWidth: 1,
+    borderRadius: 100,
+    borderColor: "#FF6C00",
+    backgroundColor: "#FF6C00",
+  },
+
   download: {
     fontSize: 16,
     color: "#BDBDBD",
