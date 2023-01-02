@@ -11,13 +11,9 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import {AntDesign, Feather, MaterialIcons, FontAwesome } from '@expo/vector-icons';
 
-import Delete from "../../assets/img/delete.svg";
-import LogOutIcon from "../../assets/img/log-out.svg";
 
-import Shape from "../../assets/img/Shape.svg";
-import ThumbsUp from "../../assets/img/thumbs-up.svg";
-import Location from "../../assets/img/map-pin.svg";
 const ProfileScreen = ({ onLayout }) => {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
 
@@ -63,13 +59,14 @@ const ProfileScreen = ({ onLayout }) => {
           >
             <View style={styles.wrapper}>
               <View style={styles.image_thumb}>
-                <Delete style={styles.delBtn} width={25} height={25} />
+                {/* <Delete  width={25} height={25} /> */}
+                <Feather name="x-circle" size={24} color="black" /> 
               </View>
               <TouchableOpacity
                 onPress={() => navigation.navigate("Login")}
                 style={styles.logOutBtn}
               >
-                <LogOutIcon width={24} height={24} />
+                <MaterialIcons name="logout" size={24} color="black" /> 
               </TouchableOpacity>
               <Text style={{ ...styles.title, fontFamily: "RobotoBold" }}>
                 User Name
@@ -95,7 +92,7 @@ const ProfileScreen = ({ onLayout }) => {
                         style={{ flexDirection: "row", alignItems: "center" }}
                       >
                         <TouchableOpacity>
-                          <Shape width={24} height={24} />
+                          <FontAwesome name="commenting-o" size={24} color="black" />
                         </TouchableOpacity>
 
                         <Text style={{ alignSelf: "center", marginRight: 8 }}>
@@ -106,7 +103,7 @@ const ProfileScreen = ({ onLayout }) => {
 
                       <View style={{ flexDirection: "row" }}>
                         <TouchableOpacity>
-                          <ThumbsUp width={24} height={24} />
+                          <AntDesign name="like2" size={24} color="black" />
                         </TouchableOpacity>
                         <Text style={{ alignSelf: "center", marginLeft: 8 }}>
                           {" "}
@@ -117,7 +114,7 @@ const ProfileScreen = ({ onLayout }) => {
                     <View
                       style={{ flexDirection: "row", justifyContent: "center" }}
                     >
-                      <Location width={24} height={24} />
+                      <AntDesign name="enviromento" size={24} color="black" />
                       <Text style={{ alignSelf: "center", marginLeft: 8 }}>
                         Location
                       </Text>
