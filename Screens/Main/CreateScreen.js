@@ -16,11 +16,8 @@ import {
   TouchableWithoutFeedback,
   TextInput,
 } from "react-native";
+import { AntDesign, MaterialIcons, FontAwesome} from '@expo/vector-icons'; 
 
-import ArrowLeft from "../../assets/img/arrow-left.svg";
-import MapIcon from "../../assets/img/map-pin.svg";
-import Photo from "../../assets/img/Photo.svg";
-import Trash from "../../assets/img/trash.svg";
 
 export const CreateScreen = ({ onLayout, navigation }) => {
   const [name, setName] = useState("");
@@ -121,8 +118,8 @@ export const CreateScreen = ({ onLayout, navigation }) => {
             <Text style={{ ...styles.title, fontFamily: "RobotoBold" }}>
               Create post
             </Text>
-            <TouchableOpacity style={styles.backBtn}>
-              <ArrowLeft width={24} height={24} />
+            <TouchableOpacity style={styles.backBtn} onPress={() => navigation.navigate("Posts")}>
+              <AntDesign name="back" size={24} color="black" />
             </TouchableOpacity>
           </View>
           <View
@@ -154,7 +151,7 @@ export const CreateScreen = ({ onLayout, navigation }) => {
                   }}
                 >
                   <TouchableOpacity onPress={takePhoto}>
-                    <Photo />
+                    <MaterialIcons name="add-a-photo" size={45} color="white" style={styles.photoButton} />
                   </TouchableOpacity>
                 </Camera>
               )}
@@ -174,12 +171,11 @@ export const CreateScreen = ({ onLayout, navigation }) => {
                     style={{
                       ...styles.input,
                       paddingLeft: 28,
-
                       justifyContent: "center",
                     }}
                     onPress={() => navigation.navigate("MapScreen")}
                   >
-                    <MapIcon style={styles.location} />
+                    <AntDesign name="enviromento" size={24} color="black" style={styles.location} />
                     <Text
                       style={{
                         fontFamily: "Roboto",
@@ -201,11 +197,11 @@ export const CreateScreen = ({ onLayout, navigation }) => {
                 </TouchableOpacity>
               </View>
             </View>
-            <View style={{ alignItems: "center" }}>
+            {photo&& <View style={{ alignItems: "center" }}>
               <TouchableOpacity onPress={onDelete}>
-                <Trash width={70} height={40} />
+              <FontAwesome name="trash-o" size={24} color="black" />
               </TouchableOpacity>
-            </View>
+            </View> }
           </View>
         </View>
       </TouchableWithoutFeedback>
@@ -297,6 +293,10 @@ const styles = StyleSheet.create({
     borderColor: "rgba(189, 189, 189, 1)",
     backgroundColor: "rgba(189, 189, 189, 1)",
   },
+  photoButton:{
+    width: 50,
+    height:50
+  }
 });
 
 export default CreateScreen;

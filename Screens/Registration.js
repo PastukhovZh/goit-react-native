@@ -1,7 +1,7 @@
 import { useTogglePasswordVisibility } from "../assets/useTogglePasswordVisibility";
 
 import { useFonts } from "expo-font";
-import Add from "../assets/img/add.svg";
+// import Add from "../assets/img/add.svg";
 import React, { useState, useEffect, useCallback } from "react";
 import {
   Dimensions,
@@ -15,6 +15,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 const Registration = ({ navigation, onLayout }) => {
   const [login, setLogin] = useState("");
@@ -76,7 +77,7 @@ const Registration = ({ navigation, onLayout }) => {
             }}
           >
             <View style={styles.image_thumb}>
-              <Add style={styles.addBtn} width={25} height={25} />
+              <Ionicons name="add-circle-outline" size={20} style={styles.icons } />
             </View>
             <Text style={{ ...styles.title, fontFamily: "RobotoBold" }}>
               Registration

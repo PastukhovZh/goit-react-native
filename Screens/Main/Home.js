@@ -1,12 +1,14 @@
-import CreateScreen from "../Main/CreateScreen";
-import ProfileScreen from "../Main/ProfileScreen";
-import PostsScreen from "../Main/PostsScreen";
-import MapScreen from "../Main/MapScreen";
+import CreateScreen from "./CreateScreen";
+import ProfileScreen from "./ProfileScreen";
+import PostsScreen from "./PostsScreen";
+import MapScreen from "./MapScreen";
 
+
+import { MaterialIcons, Ionicons,AntDesign  } from '@expo/vector-icons';
+import {TouchableOpacity, StyleSheet} from 'react-native'
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import GridIcon from "../../assets/img/gridIcon.svg";
-import NewIcon from "../../assets/img/newIcon.svg";
-import UserIcon from "../../assets/img/userIcon.svg";
+
+
 import { createStackNavigator } from "@react-navigation/stack";
 
 import CommentsScreen from "./CommentsScreen";
@@ -21,7 +23,10 @@ export const HomeTabsBtn = () => {
         name="Posts"
         component={PostsScreen}
         options={{
-          tabBarIcon: () => <GridIcon width={40} height={40} />,
+          tabBarIcon: () =>
+            
+              <MaterialIcons name="photo-library" size={24} style={styles.icons} />
+            ,
           headerShown: false,
         }}
       />
@@ -31,7 +36,7 @@ export const HomeTabsBtn = () => {
         options={{
           tabBarStyle: { display: "none" },
           tabBarVisible: false,
-          tabBarIcon: () => <NewIcon width={70} height={40} />,
+          tabBarIcon: () => <Ionicons name="add-circle-outline" size={50} style={styles.icons } />,
           headerShown: false,
         }}
       />
@@ -40,7 +45,9 @@ export const HomeTabsBtn = () => {
         name="Profile"
         component={ProfileScreen}
         options={{
-          tabBarIcon: () => <UserIcon width={40} height={40} />,
+          tabBarIcon: () => 
+            <AntDesign name="user" size={24} style={styles.icons }/>
+          ,
           headerShown: false,
         }}
       />
@@ -70,4 +77,14 @@ const Home = () => {
   );
 };
 
+const styles = StyleSheet.create({
+  icons: {
+    size: 34,
+    color: 'grey',
+  }
+})
+
+
 export default Home;
+
+

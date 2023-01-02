@@ -4,15 +4,13 @@ import {
   Item,
   FlatList,
   Text,
-  ScrollView,
   View,
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
+import { MaterialIcons, FontAwesome, AntDesign } from '@expo/vector-icons';
 
-import LogOutIcon from "../../assets/img/log-out.svg";
-import Shape from "../../assets/img/Shape.svg";
-import Location from "../../assets/img/map-pin.svg";
+
 
 const PostsScreen = ({ onLayout, navigation, route }) => {
   const [postsInfo, setPostsInfo] = useState([]);
@@ -43,14 +41,20 @@ const PostsScreen = ({ onLayout, navigation, route }) => {
                   navigation.navigate("CommentsScreen");
                 }}
               >
-                <Shape width={24} height={24} />
+                <FontAwesome name="commenting-o" size={24} color="black" />
               </TouchableOpacity>
 
               <Text style={{ alignSelf: "center", marginRight: 8 }}> 34 </Text>
             </View>
           </View>
           <View style={{ flexDirection: "row", justifyContent: "center" }}>
-            <Location width={24} height={24} />
+            <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate("MapScreen");
+                }}
+              >
+                <AntDesign name="enviromento" size={24} color="black" />
+              </TouchableOpacity>
             <View
               style={{
                 alignSelf: "center",
@@ -68,14 +72,14 @@ const PostsScreen = ({ onLayout, navigation, route }) => {
   );
 
   return (
-    <ScrollView style={styles.container} onLayout={onLayout}>
+    <View style={styles.container} onLayout={onLayout}>
       <View style={styles.header}>
         <Text style={{ ...styles.title, fontFamily: "RobotoBold" }}>Posts</Text>
         <TouchableOpacity
           style={styles.logOutBtn}
           onPress={() => navigation.navigate("Login")}
         >
-          <LogOutIcon width={24} height={24} />
+          <MaterialIcons name="logout" size={24} color="black" />
         </TouchableOpacity>
       </View>
 
@@ -96,7 +100,7 @@ const PostsScreen = ({ onLayout, navigation, route }) => {
           renderItem={renderItem}
         />
       </View>
-    </ScrollView>
+    </View>
   );
 };
 

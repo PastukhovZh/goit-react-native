@@ -1,7 +1,7 @@
 // App.js
 import React, { useEffect, useCallback } from "react";
 import { useFonts } from "expo-font";
-
+import {SplashScreen} from 'react-native'
 import { NavigationContainer } from "@react-navigation/native";
 import useRoute from "./route";
 import Home from "./Screens/Main/Home";
