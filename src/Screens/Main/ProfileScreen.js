@@ -19,7 +19,7 @@ import { db } from "../../firebase/config";
 import { authSignOutUser } from "../../redux/auth/authOperations";
 
 
-const ProfileScreen = ({ onLayout }) => {
+const ProfileScreen = ({ onLayout, navigation }) => {
   const { login, userId } = useSelector((state) => state.auth);
   const [userPosts, setUserposts] = useState("");
   const { myImage } = useSelector((state) => state.auth);
@@ -91,7 +91,7 @@ const ProfileScreen = ({ onLayout }) => {
             >
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate("Comments", {
+                  navigation.navigate("CommentsScreen", {
                     postId: item.userId,
                     photo: item.photo,
                   });
