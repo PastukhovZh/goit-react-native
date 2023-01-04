@@ -17,7 +17,7 @@ import { collection, addDoc, doc, onSnapshot } from "firebase/firestore";
 import { Feather } from '@expo/vector-icons';
 import { db } from "../../firebase/config";
 
-const CommentsScreen = ({ route }) => {
+const CommentsScreen = ({ route, navigation }) => {
   const { postId, photo } = route.params;
 
   const [comment, setComment] = useState("");
