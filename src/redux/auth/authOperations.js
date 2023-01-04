@@ -6,7 +6,7 @@ import {
   signOut,
 } from "firebase/auth";
 import { Alert } from "react-native";
-import { auth} from "../../firebase/config";
+import { auth } from "../../firebase/config";
 import authSlice from "./authReducer";
 const { updateUserProfile, authStateChange, authSignOut } = authSlice.actions;
 
@@ -17,10 +17,9 @@ export const authSignInUser = ({ email, password }) => async (dispatch, getSatte
         email,
         password
       );
-
+Alert.alert(`Success`)
     } catch (error) {
         Alert.alert(`${error.message}`);
-        console.log("error.message", error.message);
         showLoginError(error);
     }
 }
@@ -46,43 +45,17 @@ export const authSignUpUser =
           myImage: photoURL,
         })
       );
-      // try {
-      //   const userCredential = await createUserWithEmailAndPassword(
-      //     auth,
-      //     email,
-      //     password,
-      //     login
-      //   );
-
-      //   updateProfile(auth.currentUser, {
-      //     displayName: login,
-      //     photoURL: myImage,
-      //   }).then(() => {
-      //     dispatch(
-      //       updateUserProfile({
-      //         userId: userCredential.user.uid,
-      //         login: userCredential.user.displayName,
-      //         email: userCredential.user.email,
-      //         myImage: userCredential.user.photoURL,
-      //       })
-      //     );
-      //   });
-      Alert.alert(`Welcome`);
+      Alert.alert(`Welcome, ${login}`);
     } catch (error) {
       Alert.alert(error.message);
-      console.log("error.messageOperations", error.message);
     }
         };
   
 export const authSignOutUser = () => async (dispatch, getSatte) => {
 await signOut(auth)
-    .then(() => {
-      console.log(`Sign-out successful`);
-      dispatch(authSignOut());
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  dispatch(authSignOut());
+  Alert.alert(`See you later, ${user.login}`);
+
 }
 
 

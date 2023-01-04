@@ -9,6 +9,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   FlatList,
+  Alert,
 } from "react-native";
 import { useSelector } from "react-redux";
 
@@ -18,7 +19,6 @@ import { db } from "../../firebase/config";
 
 const CommentsScreen = ({ route }) => {
   const { postId, photo } = route.params;
-    console.log(route)
 
   const [comment, setComment] = useState("");
   const [allComments, setAllcomments] = useState("");
@@ -38,7 +38,7 @@ const CommentsScreen = ({ route }) => {
         time,
       });
     } catch (error) {
-      console.log("error.message", error.message);
+      Alert.alert("error.message", error.message);
     }
   };
 
@@ -55,7 +55,7 @@ const CommentsScreen = ({ route }) => {
         setAllcomments(docSnap.docs.map((doc) => ({ ...doc.data() })))
       );
     } catch (error) {
-      console.log(`getAllComents`, error);
+      Alert.alert(`getAllComents`, error);
     }
   };
 

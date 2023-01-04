@@ -25,7 +25,7 @@ const PostsScreen = ({ onLayout, navigation, route }) => {
   const { email, login, myImage } = useSelector((state) => state.auth);
 
 const signOut = () => {
- return dispatch(authSignOutUser());
+  dispatch(authSignOutUser());
   
   };
   const getAllPosts = async () => {

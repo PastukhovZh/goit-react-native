@@ -18,7 +18,7 @@ const HomeStack = createStackNavigator();
 
 export const HomeTabsBtn = () => {
   return (
-    <HomeTabs.Navigator tabBarOptions={{ showLabel: false }}>
+    <HomeTabs.Navigator screenOptions={{ showLabel: false }}>
       <HomeTabs.Screen
         name="Posts"
         component={PostsScreen}
@@ -32,9 +32,7 @@ export const HomeTabsBtn = () => {
         name="CreateScreen"
         component={CreateScreen}
         options={{
-          tabBarStyle: { display: "none" },
-          tabBarVisible: false,
-          tabBarIcon: () => <Ionicons name="add-circle-outline" size={50} style={styles.icons } />,
+          tabBarIcon: () => <Ionicons name="add-circle-outline" size={35} style={styles.icons } />,
           headerShown: false,
         }}
       />
@@ -62,7 +60,6 @@ const Home = () => {
         component={HomeTabsBtn}
       />
       <HomeStack.Screen
-        options={{ headerShown: false }}
         name="CommentsScreen"
         component={CommentsScreen}
       />

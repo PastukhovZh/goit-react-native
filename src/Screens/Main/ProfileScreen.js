@@ -11,12 +11,13 @@ import {
   TouchableOpacity,
   View,
   ScrollView,
+  Alert,
 } from "react-native";
 import {AntDesign, Feather, MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import { collection, onSnapshot, where, query } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { authSignOutUser } from "../../redux/auth/authOperations";
-authSignOutUser
+
 
 const ProfileScreen = ({ onLayout }) => {
   const { login, userId } = useSelector((state) => state.auth);
@@ -36,7 +37,7 @@ const ProfileScreen = ({ onLayout }) => {
         setUserposts(docSnap.docs.map((doc) => ({ ...doc.data() })))
       );
     } catch (error) {
-      console.log(error);
+      Alert.alert(error);
     }
   };
 
