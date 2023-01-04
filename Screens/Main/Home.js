@@ -24,9 +24,7 @@ export const HomeTabsBtn = () => {
         component={PostsScreen}
         options={{
           tabBarIcon: () =>
-            
-              <MaterialIcons name="photo-library" size={24} style={styles.icons} />
-            ,
+              <MaterialIcons name="photo-library" size={24} style={styles.icons} />,
           headerShown: false,
         }}
       />
@@ -69,7 +67,6 @@ const Home = () => {
         component={CommentsScreen}
       />
       <HomeStack.Screen
-        options={{ headerShown: false }}
         name="MapScreen"
         component={MapScreen}
       />

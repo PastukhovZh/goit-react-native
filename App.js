@@ -1,13 +1,15 @@
-// App.js
 import React, { useEffect, useCallback } from "react";
 import { useFonts } from "expo-font";
-import {SplashScreen} from 'react-native'
-import { NavigationContainer } from "@react-navigation/native";
-import useRoute from "./route";
-import Home from "./Screens/Main/Home";
+import { Provider } from "react-redux";
+
+import { SplashScreen } from 'react-native'
+import { store } from "./redux/store";
+
+
+import Main from "./components/Main";
+
 
 export default function App() {
-  const routing = useRoute(false);
 
   const [fontsLoaded] = useFonts({
     RobotoBold: require("./assets/fonts/Roboto/Roboto-Bold.ttf"),
@@ -31,7 +33,9 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer onLayout={onLayout}>{routing}</NavigationContainer>
+    <Provider store={store}>
+    <Main onLayout={onLayout}/>
+    </Provider>
   );
 }
 

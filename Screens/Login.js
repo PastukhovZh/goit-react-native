@@ -1,6 +1,7 @@
 import { useFonts } from "expo-font";
 import React, { useState, useEffect, useCallback } from "react";
 import {
+  Alert,
   Dimensions,
   ImageBackground,
   Keyboard,
@@ -12,27 +13,45 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import { useDispatch } from "react-redux";
+import { auth } from "../firebase/config";
+import { authSignInUser } from "../redux/auth/authOperations";
 
+
+// console.log(auth.name)
+  const initialState = {
+    email: "",
+  password: "",
+};
 
 const Login = ({ navigation, onLayout }) => {
+  const [state, setState] = useState(initialState)
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
+
+  // const [email, setEmail] = useState("");
+  // const [password, setPassword] = useState("");
 
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
 
   const [borderColorEmail, setborderColorEmail] = useState("#E8E8E8");
   const [borderColorPassword, setborderColorPassword] = useState("#E8E8E8");
 
-  const emailHandler = (text) => setEmail(text);
-  const passwordHandler = (text) => setPassword(text);
+  // const emailHandler = (text) => setEmail(text);
+  // const passwordHandler = (text) => setPassword(text);
 
   const onLogin = () => {
-    console.log(`${email}` + `${password}`);
+    console.log(state);
+console.log(auth.currentUser)
 
-    setPassword("");
-    setEmail("");
-    navigation.navigate("Home");
+if (!state.email.trim() || !state.password.trim()) {
+      Alert.alert(`All fields must be completed!`);
+      return;
+    }
+    Alert.alert(`Welcome`);
+
+    dispatch(authSignInUser(state));
+    setState(initialState);
 
     setIsShowKeyboard(false);
     Keyboard.dismiss();
@@ -89,8 +108,9 @@ const Login = ({ navigation, onLayout }) => {
               </Text>
               <View style={{ ...styles.form, width: windowWidth }}>
                 <TextInput
-                  value={email}
-                  onChangeText={emailHandler}
+                  value={state.email}
+                  onChangeText={(value) =>
+                  setState((prevState) => ({ ...prevState, email: value }))}
                   onFocus={() => {
                     setborderColorEmail("#FF6C00");
                     setIsShowKeyboard(true);
@@ -105,8 +125,9 @@ const Login = ({ navigation, onLayout }) => {
                 />
                 <View style={{ position: "relative" }}>
                   <TextInput
-                    value={password}
-                    onChangeText={passwordHandler}
+                    value={state.password}
+                    onChangeText={(value) =>
+                  setState((prevState) => ({ ...prevState, password: value }))}
                     onFocus={() => {
                       setborderColorPassword("#FF6C00");
                       setIsShowKeyboard(true);
