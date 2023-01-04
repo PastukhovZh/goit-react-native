@@ -1,25 +1,51 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   Dimensions,
   Image,
   ImageBackground,
-  Keyboard,
-  ScrollView,
+  FlatList,
   StyleSheet,
   Text,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   View,
+  ScrollView,
 } from "react-native";
 import {AntDesign, Feather, MaterialIcons, FontAwesome } from '@expo/vector-icons';
-
+import { collection, onSnapshot, where, query } from "firebase/firestore";
+import { db } from "../../firebase/config";
+import { authSignOutUser } from "../../redux/auth/authOperations";
+authSignOutUser
 
 const ProfileScreen = ({ onLayout }) => {
-  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+  const { login, userId } = useSelector((state) => state.auth);
+  const [userPosts, setUserposts] = useState("");
+  const { myImage } = useSelector((state) => state.auth);
 
-  const keyboardHide = () => {
-    setIsShowKeyboard(false);
-    Keyboard.dismiss();
+
+  const dispatch = useDispatch();
+
+  const getUserPosts = async () => {
+    try {
+      const dbRef = query(
+        collection(db, "posts"),
+        where("userId", "==", userId)
+      );
+      onSnapshot(dbRef, (docSnap) =>
+        setUserposts(docSnap.docs.map((doc) => ({ ...doc.data() })))
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getUserPosts();
+  }, []);
+    
+  const signOut = () => {
+    dispatch(authSignOutUser());
   };
 
   const [windowWidth, setWindowWidth] = useState(
@@ -41,13 +67,65 @@ const ProfileScreen = ({ onLayout }) => {
 
     return () => dimensionsHandler?.remove();
   }, []);
-  //
+  const renderItem = ({item}) =>(
+<View style={styles.cardInfo}>
+      <Image
+        source={{ uri: item.photo }}
+        style={{ height: 240, width: 350, borderRadius: 8 }}
+      />
+      <View style={{ width: "100%" }}>
+        <Text style={{ ...styles.locationName, fontFamily: "Roboto" }}>
+          {item.description}
+        </Text>
+        <View
+          style={{ ...styles.infoSection, justifyContent: "space-between" }}
+        >
+          <View style={{ flexDirection: "row" }}>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "flex-start",
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate("Comments", {
+                    postId: item.userId,
+                    photo: item.photo,
+                  });
+                }}
+              >
+                <FontAwesome name="commenting-o" size={24} color="black" />
+              </TouchableOpacity>
+
+              <Text style={{ alignSelf: "center", marginRight: 8 }}>
+                {" "}
+                Comments{" "}
+              </Text>
+            </View>
+          </View>
+          <TouchableOpacity
+            style={{ flexDirection: "row", justifyContent: "center" }}
+            onPress={() =>
+              navigation.navigate("MapScreen", { location: item.location })
+            }
+          >
+            <AntDesign name="enviromento" size={24} color="black" />
+            <Text style={{ alignSelf: "center", marginLeft: 8 }}>
+              {item.city}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  );
+
 
   return (
-    <ScrollView style={styles.container} onLayout={onLayout}>
-      <TouchableWithoutFeedback onPress={keyboardHide}>
+    <View style={styles.container} onLayout={onLayout}>
         <View
-          style={{ flex: 1, justifyContent: "canter", alignItems: "center" }}
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
           <ImageBackground
             style={{
@@ -59,74 +137,57 @@ const ProfileScreen = ({ onLayout }) => {
           >
             <View style={styles.wrapper}>
               <View style={styles.image_thumb}>
-                {/* <Delete  width={25} height={25} /> */}
-                <Feather name="x-circle" size={24} color="black" /> 
-              </View>
+                {myImage ? (
+                <Image
+                  source={{ uri: myImage }}
+                  style={{
+                    height: 120,
+                    with: 120,
+                    borderRadius: 16,
+                  }}
+                />
+              ) : (
+                  <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                    <AntDesign name="frowno" size={80} color="black" style={{marginTop:7}} />
+                    <Text style={{ fontFamily: 'RobotoBold', fontSize: 20 }}>No Image</Text>
+                </View>
+              )}
+            </View>
+            
+
+            
               <TouchableOpacity
-                onPress={() => navigation.navigate("Login")}
+                onPress={signOut}
                 style={styles.logOutBtn}
               >
                 <MaterialIcons name="logout" size={24} color="black" /> 
               </TouchableOpacity>
               <Text style={{ ...styles.title, fontFamily: "RobotoBold" }}>
-                User Name
+                {login}
               </Text>
 
               <View style={styles.cardInfo}>
-                <Image
-                  source={require("../../assets/img/Photo_BG.jpg")}
-                  style={{ height: 240, borderRadius: 8 }}
-                />
+                
                 <View>
                   <Text
-                    style={{ ...styles.locationName, fontFamily: "Roboto" }}
+                    style={{ ...styles.locationName, fontFamily: "RobotoBold" }}
                   >
-                    {" "}
-                    Name{" "}
+                    {login}
                   </Text>
-                  <View
-                    style={{ ...styles.infoSection, width: windowWidth - 32 }}
-                  >
-                    <View style={{ flexDirection: "row", marginRight: 27 }}>
-                      <View
-                        style={{ flexDirection: "row", alignItems: "center" }}
-                      >
-                        <TouchableOpacity>
-                          <FontAwesome name="commenting-o" size={24} color="black" />
-                        </TouchableOpacity>
-
-                        <Text style={{ alignSelf: "center", marginRight: 8 }}>
-                          {" "}
-                          34{" "}
-                        </Text>
-                      </View>
-
-                      <View style={{ flexDirection: "row" }}>
-                        <TouchableOpacity>
-                          <AntDesign name="like2" size={24} color="black" />
-                        </TouchableOpacity>
-                        <Text style={{ alignSelf: "center", marginLeft: 8 }}>
-                          {" "}
-                          159{" "}
-                        </Text>
-                      </View>
-                    </View>
-                    <View
-                      style={{ flexDirection: "row", justifyContent: "center" }}
-                    >
-                      <AntDesign name="enviromento" size={24} color="black" />
-                      <Text style={{ alignSelf: "center", marginLeft: 8 }}>
-                        Location
-                      </Text>
-                    </View>
-                  </View>
+                  <View>
+              <FlatList
+                data={userPosts}
+                keyExtractor={userPosts.id}
+                renderItem={renderItem}
+              />
+            </View>
                 </View>
               </View>
             </View>
           </ImageBackground>
         </View>
-      </TouchableWithoutFeedback>
-    </ScrollView>
+      
+    </View>
   );
 };
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { Camera } from "expo-camera";
 
 import * as Location from "expo-location";
@@ -16,53 +17,33 @@ import {
   TouchableWithoutFeedback,
   TextInput,
 } from "react-native";
-import { AntDesign, MaterialIcons, FontAwesome} from '@expo/vector-icons'; 
+
+import { AntDesign, MaterialIcons, FontAwesome } from '@expo/vector-icons'; 
+
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { collection, addDoc } from "firebase/firestore";
+import { db } from "../../firebase/config";
 
 
 export const CreateScreen = ({ onLayout, navigation }) => {
-  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
   const [location, setLocation] = useState(null);
+  const [city, setCity] = useState("");
 
-  //   camera
 
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const [camera, setCamera] = useState(null);
   const [photo, setPhoto] = useState(null);
 
-  //   зайва змінна?
+  const { userId, login } = useSelector((state) => state.auth);
 
-  const nameHandler = (text) => setName(text.trim());
-  //   const locationHandler = (text) => setLocation(text.trim());
 
-  const onPost = () => {
-    if (!name.trim() && !location) {
-      Alert.alert(`Please fill in all info!`);
-      return;
-    }
-    sendInfo();
-    setName("");
-    setLocation(null);
-    setPhoto(null);
-    Keyboard.dismiss();
-  };
+  const descriptionHandler = (text) => setDescription(text.trim());
 
   const keyboardHide = () => {
     Keyboard.dismiss();
   };
 
-  const onDelete = () => {
-    setName("");
-    setLocation(null);
-    setPhoto(null);
-
-    Keyboard.dismiss();
-  };
-
-  //   Camera
-  const takePhoto = async () => {
-    const photo = await camera.takePictureAsync();
-    setPhoto(photo.uri);
-  };
 
   useEffect(() => {
     (async () => {
@@ -78,23 +59,25 @@ export const CreateScreen = ({ onLayout, navigation }) => {
         return;
       }
 
-      //   let location = await Location.getCurrentPositionAsync({});
       let locationOfPhoto = await Location.getCurrentPositionAsync();
 
       let coords = {
         latitude: locationOfPhoto.coords.latitude,
         longitude: locationOfPhoto.coords.longitude,
       };
-      setLocation(coords);
-      console.log(`location`, location);
+
+      let address = await Location.reverseGeocodeAsync(coords);
+      let city = address[0].city;
+      setLocation(locationOfPhoto);
+      setCity(city);
     })();
   }, []);
 
-  const sendInfo = () => {
-    navigation.navigate("Posts", { photo, name, location });
+  const takePhoto = async () => {
+    const photo = await camera.takePictureAsync();
+    setPhoto(photo.uri);
   };
-
-  if (!permission) {
+if (!permission) {
     // Camera permissions are still loading
     return <View />;
   }
@@ -109,6 +92,78 @@ export const CreateScreen = ({ onLayout, navigation }) => {
       </View>
     );
   }
+
+  const uploadPhotoToServer = async () => {
+    const storage = getStorage();
+    const uniquePostId = Date.now().toString();
+    const storageRef = ref(storage, `images/${uniquePostId}`);
+
+    const response = await fetch(photo);
+    const file = await response.blob();
+
+    const uploadPhoto = await uploadBytes(storageRef, file).then(() => {
+      console.log(`photo is uploaded`);
+    });
+
+    const processedPhoto = await getDownloadURL(
+      ref(storage, `images/${uniquePostId}`)
+    )
+      .then((url) => {
+        return url;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    return processedPhoto;
+  };
+
+const uploadPostToServer = async () => {
+    const photo = await uploadPhotoToServer();
+
+    try {
+      const setUserPost = await addDoc(collection(db, "posts"), {
+        photo,
+        description,
+        location,
+        city,
+        userId,
+        login,
+      });
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  };
+  const sendInfo = () => {
+    navigation.navigate("Posts");
+  };
+
+  const onPost = () => {
+    if (!description.trim()|| !location) {
+      Alert.alert(
+        `Please fill in the description and wait until the Location is uploaded!`
+      );
+      return;
+    }
+    uploadPostToServer();
+
+    sendInfo();
+    uploadPhotoToServer();
+    setDescription("");
+    setLocation(null);
+    setCity(null);
+    setPhoto(null);
+    Keyboard.dismiss();
+    return
+  };
+
+  const onDelete = () => {
+    setDescription("");
+    setLocation(null);
+    setCity(null);
+    setPhoto(null);
+
+    Keyboard.dismiss();
+  };
 
   return (
     <ScrollView style={styles.container} onLayout={onLayout}>
@@ -137,7 +192,7 @@ export const CreateScreen = ({ onLayout, navigation }) => {
                   />
                   <TouchableOpacity
                     style={styles.changeBtn}
-                    onPress={() => setPhoto(null)}
+                    onPress={() => {setPhoto(null), setLocation(null)}}
                   >
                     <Text style={{ color: "#fff" }}>New Photo</Text>
                   </TouchableOpacity>
@@ -158,34 +213,32 @@ export const CreateScreen = ({ onLayout, navigation }) => {
 
               <View style={styles.form}>
                 <TextInput
-                  value={name}
-                  onChangeText={nameHandler}
-                  placeholder="Name"
+                  value={description}
+                  onChangeText={descriptionHandler}
+                  placeholder="Description"
                   style={{
                     ...styles.input,
                     fontFamily: "Roboto",
                   }}
                 />
                 <View>
-                  <TouchableOpacity
+                  <View
                     style={{
                       ...styles.input,
                       paddingLeft: 28,
                       justifyContent: "center",
                     }}
-                    onPress={() => navigation.navigate("MapScreen")}
                   >
                     <AntDesign name="enviromento" size={24} color="black" style={styles.location} />
                     <Text
                       style={{
                         fontFamily: "Roboto",
-                        color: "#BDBDBD",
                         fontSize: 16,
                       }}
                     >
-                      Location: {location?.latitude}, {location?.longitude}
+                      Location: {city}
                     </Text>
-                  </TouchableOpacity>
+                  </View>
                 </View>
                 <TouchableOpacity
                   disabled={photo ? false : true}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Image,
   Item,
@@ -7,21 +8,36 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { MaterialIcons, FontAwesome, AntDesign } from '@expo/vector-icons';
+import { authSignOutUser } from "../../redux/auth/authOperations";
 
+import { collection, onSnapshot } from "firebase/firestore";
+import { db } from "../../firebase/config";
 
 
 const PostsScreen = ({ onLayout, navigation, route }) => {
   const [postsInfo, setPostsInfo] = useState([]);
-  console.log("route.params", route.params);
+
+
+  const dispatch = useDispatch();
+  const { email, login, myImage } = useSelector((state) => state.auth);
+
+const signOut = () => {
+ return dispatch(authSignOutUser());
+  
+  };
+  const getAllPosts = async () => {
+    const dbRef = collection(db, "posts");
+    onSnapshot(dbRef, (docSnap) =>
+      setPostsInfo(docSnap.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    );
+  };
 
   useEffect(() => {
-    if (route.params) {
-      setPostsInfo((prevState) => [...prevState, route.params]);
-    }
-  }, [route.params]);
-  console.log("postsInfo", postsInfo);
+    getAllPosts();
+  }, []);
 
   const renderItem = ({ item }) => (
     <View style={styles.cardInfo}>
@@ -38,19 +54,20 @@ const PostsScreen = ({ onLayout, navigation, route }) => {
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate("CommentsScreen");
+                  navigation.navigate("CommentsScreen", {
+                    postId: item.id,
+                    photo: item.photo,
+                  });
                 }}
               >
                 <FontAwesome name="commenting-o" size={24} color="black" />
               </TouchableOpacity>
-
-              <Text style={{ alignSelf: "center", marginRight: 8 }}> 34 </Text>
             </View>
           </View>
           <View style={{ flexDirection: "row", justifyContent: "center" }}>
             <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate("MapScreen");
+                  navigation.navigate("MapScreen", { location: item.location });
                 }}
               >
                 <AntDesign name="enviromento" size={24} color="black" />
@@ -62,8 +79,7 @@ const PostsScreen = ({ onLayout, navigation, route }) => {
                 flexDirection: "column",
               }}
             >
-              <Text>{item.location?.latitude}</Text>
-              <Text>{item.location?.longitude}</Text>
+              <Text>{item.city}</Text>
             </View>
           </View>
         </View>
@@ -77,7 +93,7 @@ const PostsScreen = ({ onLayout, navigation, route }) => {
         <Text style={{ ...styles.title, fontFamily: "RobotoBold" }}>Posts</Text>
         <TouchableOpacity
           style={styles.logOutBtn}
-          onPress={() => navigation.navigate("Login")}
+          onPress={signOut}
         >
           <MaterialIcons name="logout" size={24} color="black" />
         </TouchableOpacity>
@@ -86,17 +102,17 @@ const PostsScreen = ({ onLayout, navigation, route }) => {
       <View style={styles.userInfo}>
         <Image
           style={{ marginRight: 8, borderRadius: 16 }}
-          source={require("../../assets/img/UserPhoto.jpg")}
+          source={{uri:myImage}}
         />
         <View>
-          <Text style={{ fontFamily: "RobotoBold" }}>userLogin</Text>
-          <Text style={{ fontFamily: "Roboto" }}>userEmail</Text>
+          <Text style={{ fontFamily: "RobotoBold" }}>{login}</Text>
+          <Text style={{ fontFamily: "Roboto" }}>{email}</Text>
         </View>
       </View>
       <View>
         <FlatList
           data={postsInfo}
-          keyExtractor={(item, index) => index.toString()}
+          keyExtractor={postsInfo.id}
           renderItem={renderItem}
         />
       </View>
