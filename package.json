@@ -34,7 +34,9 @@
     "react-native-svg": "13.4.0",
     "react-native-svg-transformer": "^1.0.0",
     "react-native-web": "^0.18.10",
-    "react-redux": "^8.0.5"
+    "react-redux": "^8.0.5",
+    "@expo/webpack-config": "^0.17.2",
+    "expo-updates": "~0.15.6"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"
