@@ -6,7 +6,7 @@ import useRoute from "../route";
 
 // import "../firebase";
 
-import { authStateChangeUser } from "../redux/auth/authOperations";
+import { authStateChangeUser } from "../../src/redux/auth/authOperations";
 
 export default function Main({ onLayout }) {
   const { stateChange } = useSelector((state) => state.auth);

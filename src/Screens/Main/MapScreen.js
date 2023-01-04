@@ -5,7 +5,6 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const MapScreen = ({ navigation, route }) => {
   const { longitude, latitude } = route.params.location.coords;
-  console.log(route)
   
   return (
 

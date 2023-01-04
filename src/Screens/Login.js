@@ -18,7 +18,6 @@ import { auth } from "../firebase/config";
 import { authSignInUser } from "../redux/auth/authOperations";
 
 
-// console.log(auth.name)
   const initialState = {
     email: "",
   password: "",
@@ -41,15 +40,11 @@ const Login = ({ navigation, onLayout }) => {
   // const passwordHandler = (text) => setPassword(text);
 
   const onLogin = () => {
-    console.log(state);
-console.log(auth.currentUser)
 
 if (!state.email.trim() || !state.password.trim()) {
       Alert.alert(`All fields must be completed!`);
       return;
     }
-    Alert.alert(`Welcome`);
-
     dispatch(authSignInUser(state));
     setState(initialState);
 

@@ -102,7 +102,7 @@ if (!permission) {
     const file = await response.blob();
 
     const uploadPhoto = await uploadBytes(storageRef, file).then(() => {
-      console.log(`photo is uploaded`);
+      Alert.alert(`photo is uploaded`);
     });
 
     const processedPhoto = await getDownloadURL(
@@ -112,7 +112,7 @@ if (!permission) {
         return url;
       })
       .catch((error) => {
-        console.log(error);
+        Alert.alert(error);
       });
     return processedPhoto;
   };

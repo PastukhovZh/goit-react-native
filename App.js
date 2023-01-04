@@ -3,17 +3,16 @@ import { useFonts } from "expo-font";
 import { Provider } from "react-redux";
 
 import { SplashScreen } from 'react-native'
-import { store } from "./redux/store";
 
-
-import Main from "./components/Main";
+import Main from "./src/components/Main";
+import { store } from "./src/redux/store";
 
 
 export default function App() {
 
   const [fontsLoaded] = useFonts({
-    RobotoBold: require("./assets/fonts/Roboto/Roboto-Bold.ttf"),
-    Roboto: require("./assets/fonts/Roboto/Roboto-Regular.ttf"),
+    RobotoBold: require("./src/assets/fonts/Roboto/Roboto-Bold.ttf"),
+    Roboto: require("./src/assets/fonts/Roboto/Roboto-Regular.ttf"),
   });
 
   useEffect(() => {

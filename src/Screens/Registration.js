@@ -19,6 +19,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
+  Alert,
 } from "react-native";
 
 // import { auth } from "../firebase/config";
@@ -75,7 +76,7 @@ const dispatch = useDispatch()
                 return url;
             })
             .catch((error) => {
-                console.log(error);
+                Alert.alert(error);
             });
             return processedPhoto;
         };
@@ -97,7 +98,7 @@ const dispatch = useDispatch()
       setIsShowKeyboard(false);
       Keyboard.dismiss();
     } catch (error) {
-      console.log("error.messageRegister", error.message);
+      Alert.alert("error.messageRegister", error.message);
     }
     
   };
