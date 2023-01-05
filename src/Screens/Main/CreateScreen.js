@@ -71,7 +71,7 @@ export const CreateScreen = ({ onLayout, navigation }) => {
       setLocation(locationOfPhoto);
       setCity(city);
     })();
-  }, []);
+  }, [photo]);
 
   const takePhoto = async () => {
     const photo = await camera.takePictureAsync();
@@ -180,7 +180,7 @@ const uploadPostToServer = async () => {
           <View
             style={{
               height: "100%",
-              justifyContent: "space-between",
+              justifyContent: 'space-around',
             }}
           >
             <View>
@@ -252,7 +252,7 @@ const uploadPostToServer = async () => {
             </View>
             {photo&& <View style={{ alignItems: "center" }}>
               <TouchableOpacity onPress={onDelete}>
-              <FontAwesome name="trash-o" size={24} color="black" />
+              <FontAwesome name="trash-o" size={24} color="black"  />
               </TouchableOpacity>
             </View> }
           </View>

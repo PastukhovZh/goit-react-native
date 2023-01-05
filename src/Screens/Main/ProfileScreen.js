@@ -48,6 +48,21 @@ const ProfileScreen = ({ onLayout, navigation }) => {
   const signOut = () => {
     dispatch(authSignOutUser());
   };
+  const logOutSys = async () => {
+    Alert.alert(
+      "Sign Out",
+      "Are you sure you want to sign out?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+        },
+        {
+          text: "OK",
+          onPress: signOut, 
+        }
+      ])
+  }
 
   const [windowWidth, setWindowWidth] = useState(
     Dimensions.get("window").width
@@ -158,7 +173,7 @@ const ProfileScreen = ({ onLayout, navigation }) => {
 
             
               <TouchableOpacity
-                onPress={signOut}
+                onPress={logOutSys}
                 style={styles.logOutBtn}
               >
                 <MaterialIcons name="logout" size={24} color="black" /> 
