@@ -130,7 +130,7 @@ const uploadPostToServer = async () => {
         login,
       });
     } catch (e) {
-      console.error("Error adding document: ", e);
+     Alert.alert("Error adding document: ", e);
     }
   };
   const sendInfo = () => {
