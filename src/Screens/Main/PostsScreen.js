@@ -28,6 +28,23 @@ const signOut = () => {
   dispatch(authSignOutUser());
   
   };
+
+
+  const logOutSys = async () => {
+    Alert.alert(
+      "Sign Out",
+      "Are you sure you want to sign out?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+        },
+        {
+          text: "OK",
+          onPress: signOut, 
+        }
+      ])
+  }
   const getAllPosts = async () => {
     const dbRef = collection(db, "posts");
     onSnapshot(dbRef, (docSnap) =>
@@ -93,7 +110,7 @@ const signOut = () => {
         <Text style={{ ...styles.title, fontFamily: "RobotoBold" }}>Posts</Text>
         <TouchableOpacity
           style={styles.logOutBtn}
-          onPress={signOut}
+          onPress={logOutSys}
         >
           <MaterialIcons name="logout" size={24} color="black" />
         </TouchableOpacity>

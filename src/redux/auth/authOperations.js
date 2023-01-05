@@ -54,7 +54,6 @@ export const authSignUpUser =
 export const authSignOutUser = () => async (dispatch, getSatte) => {
 await signOut(auth)
   dispatch(authSignOut());
-  Alert.alert(`See you later, ${user.login}`);
 
 }
 

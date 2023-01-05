@@ -56,7 +56,7 @@ const Home = () => {
     <HomeStack.Navigator>
       <HomeStack.Screen
         options={{ headerShown: false }}
-        name="Home"
+        name="HomeScreen"
         component={HomeTabsBtn}
       />
       <HomeStack.Screen
