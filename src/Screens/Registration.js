@@ -55,7 +55,7 @@ const dispatch = useDispatch()
           quality: 1,
         });
         if (!result.canceled) {
-            setmyImageUploud(result.assets[0].uri);
+            await setmyImageUploud(result.assets[0].uri);
         }
   };
   
@@ -82,19 +82,19 @@ const dispatch = useDispatch()
         };
         
 
-  const onRegister =async () => {
+  const onRegister = async () => {
      try {
                 const imageRef = await uploadPhotoToServer();
                 
                 setState((prevState) => ({ ...prevState}));
-                const newState={
+                const  newState={
                     myImage: imageRef,
                     login: state.login,
                     email: state.email,
                     password: state.password
                 }
                 dispatch(authSignUpUser(newState));
-      //   setState(initialState);
+        setState(initialState);
       setIsShowKeyboard(false);
       Keyboard.dismiss();
     } catch (error) {
